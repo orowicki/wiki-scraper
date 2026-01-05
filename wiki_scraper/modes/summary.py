@@ -8,39 +8,41 @@ Functions:
 - summarize: prints out the summary
 """
 
-from bs4 import BeautifulSoup
-import re
+from bs4 import Tag
 
 
-def get_summary(soup: BeautifulSoup) -> str:
+def get_valid_parapraphs(content: Tag) -> list[Tag]:
+    skip_selector = (
+        "table p, aside p, figure p, .infobox p, .thumb p, "
+        ".sidebar p, .navbox p, .toc p, .hatnote p"
+    )
+
+    candidates = content.find_all("p")
+
+    skipped = set(content.select(skip_selector))
+    candidates = [p for p in candidates if p not in skipped]
+
+    return candidates
+
+
+def get_summary(content: Tag) -> str:
     """
-    Finds and formats the first paragraph of the article given
-    by `soup`.
-
-    Returns the resulting string.
+    Return the first paragraph from an article body.
     """
 
-    content = soup.select_one("#mw-content-text .mw-parser-output")
-    if not content:
-        raise ValueError("No content found")
+    candidates = get_valid_parapraphs(content)
 
-    for p in content.find_all("p"):
-        text = p.get_text(" ", strip=True)
-
-        if not text:
+    for p in candidates:
+        if not p.get_text(" ", strip=True):
             continue
 
-        if p.find_parent(["table", "aside"]):
-            continue
-
-        text = re.sub(r"\s+([.,!?;:])", r"\1", text)
-        return text
+        return p.get_text().strip()
 
     raise ValueError("No paragraph found")
 
 
-def summarize(soup: BeautifulSoup) -> None:
+def run_summary_mode(content: Tag) -> None:
     """Prints out the summary of the article given by `soup`."""
 
-    summary = get_summary(soup)
+    summary = get_summary(content)
     print(summary)

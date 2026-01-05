@@ -1,9 +1,11 @@
 import cli
 import modes.summary
+import modes.table
 import page_fetcher
+import modes.count_words
 
 args = cli.parse_args()
 
-page = page_fetcher.fetch_page(args.summary)
+page = page_fetcher.fetch_soup(args.table)
 
-modes.summary.summarize(page)
+modes.table.run_table_mode(args.table, page, args.number)
