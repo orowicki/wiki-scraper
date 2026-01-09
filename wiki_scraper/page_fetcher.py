@@ -2,6 +2,7 @@ import requests
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from bs4 import Tag
+from pathlib import Path
 
 BASE_URL = "https://minecraft.wiki/w/"
 HEADERS = {
@@ -9,35 +10,79 @@ HEADERS = {
     "contact: oskar.rowicki@gmail.com)"
 }
 
-session = requests.Session()
-session.headers.update(HEADERS)
 
-
-def normalize_phrase(phrase: str) -> str:
+def _normalize_phrase(phrase: str) -> str:
     return phrase.strip().replace(" ", "_")
 
 
-def fetch_soup(phrase: str) -> BeautifulSoup:
-    url = urljoin(BASE_URL, normalize_phrase(phrase))
+class WikiPage:
+    session = requests.Session()
+    session.headers.update(HEADERS)
 
-    response = session.get(url, timeout=10)
-    response.raise_for_status()
+    def __init__(
+        self,
+        phrase: str | None = None,
+        base_url: str = BASE_URL,
+        forced_url: str | None = None,
+        html_file: str | Path | None = None,
+    ):
+        self.base_url = base_url.rstrip("/") + "/"
 
-    soup = BeautifulSoup(response.text, "html.parser")
+        if html_file:
+            self.html_file = Path(html_file)
+            self.url = None
+            self.phrase = phrase or self.html_file.stem
+        else:
+            self.html_file = None
+            if forced_url:
+                self.url = forced_url
+                self.phrase = phrase or forced_url.split("/")[-1]
+            elif phrase:
+                self.phrase = phrase
+                self.url = f"{self.base_url}{_normalize_phrase(phrase)}"
+                
+            else:
+                raise ValueError("No phrase, url, or html_file")
 
-    if soup.select_one(".noarticletext"):
-        raise ValueError(f"Page '{phrase}' does not exist on minecraft.wiki")
+        self.soup: BeautifulSoup | None = None
+        self.content: Tag | None = None
 
-    # disambiguation page case TODO
+    def fetch_soup(self) -> BeautifulSoup:
+        if self.soup:
+            return self.soup
 
-    return soup
+        if self.html_file:
+            if not self.html_file.exists():
+                raise FileNotFoundError(
+                    f"HTML file not found: {self.html_file}"
+                )
+            text = self.html_file.read_text(encoding="utf-8")
+        else:
+            if not self.url:
+                raise ValueError("No URL available to fetch")
+            response = self.session.get(self.url, timeout=10)
+            response.raise_for_status()
+            text = response.text
 
+        soup = BeautifulSoup(text, "html.parser")
 
-def fetch_content(phrase: str) -> Tag:
-    soup = fetch_soup(phrase)
+        if soup.select_one(".noarticletext"):
+            raise ValueError(
+                f"No article found for '{self.phrase}'"
+            )
 
-    content = soup.select_one("#mw-content-text .mw-parser-output")
-    if not content:
-        raise ValueError("No content found")
+        self.soup = soup
+        return soup
 
-    return content
+    
+    def fetch_content(self) -> Tag:
+        if self.content:
+            return self.content
+
+        soup = self.fetch_soup()
+        content = soup.select_one("#mw-content-text .mw-parser-output")
+        if not content:
+            raise ValueError("No content found")
+
+        self.content = content
+        return content

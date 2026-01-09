@@ -34,6 +34,6 @@ def update_json(counts: Counter) -> None:
         json.dump(total_counts, f, ensure_ascii=False, indent=2)
 
 
-def run_count_words_mode(content: Tag) -> None:
+def run_count_words(content: Tag) -> None:
     counts = get_counts(content)
     update_json(counts)

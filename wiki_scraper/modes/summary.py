@@ -41,7 +41,7 @@ def get_summary(content: Tag) -> str:
     raise ValueError("No paragraph found")
 
 
-def run_summary_mode(content: Tag) -> None:
+def run_summary(content: Tag) -> None:
     """Prints out the summary of the article given by `soup`."""
 
     summary = get_summary(content)

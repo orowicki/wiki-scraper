@@ -48,7 +48,7 @@ def get_counts_table(df: pd.DataFrame):
     return counts
 
 
-def run_table_mode(phrase: str, soup: BeautifulSoup, n: int) -> None:
+def run_table(phrase: str, soup: BeautifulSoup, n: int) -> None:
     df = get_table(soup, n)
     df.to_csv(f"{phrase}.csv", index=False, encoding="utf-8")
     print(df)
