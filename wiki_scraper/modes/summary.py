@@ -8,7 +8,7 @@ Functions:
 - summarize: prints out the summary
 """
 
-from page_fetcher import WikiPage
+from wiki_page.wiki_page import WikiPage
 
 class SummaryMode:
     def __init__(self, page: WikiPage):

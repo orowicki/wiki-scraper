@@ -1,0 +1,7 @@
+*.pyc
+__pycache__/
+
+*.toml
+*.csv
+*.png
+word-counts.json

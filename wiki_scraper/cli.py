@@ -204,8 +204,8 @@ def _validate_args(args: argparse.Namespace) -> None:
 def parse_args() -> argparse.Namespace:
     """Parse and validate CLI arguments."""
 
-    parser: argparse.ArgumentParser = _build_parser()
-    args: argparse.Namespace = parser.parse_args()
+    parser = _build_parser()
+    args = parser.parse_args()
     _validate_args(args)
 
     return args
