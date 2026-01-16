@@ -1,82 +1,65 @@
-from bs4 import Tag
-from modes.count_words import run_count_words
-from page_fetcher import WikiPage
+from modes.count_words import CountWordsMode
+from wiki_page.wiki_page import WikiPage
 from collections import deque
 import time
-import re
 
 
-WIKI_PREFIX = "/w/"
-BLOCKED_PREFIXES = (
-    "File:",
-    "Category:",
-    "Special:",
-    "Help:",
-    "Talk:",
-)
+class AutoCountWordsMode:
+    def __init__(
+        self, root_page: WikiPage, max_depth: int = 1, wait: float = 0.1
+    ):
+        self.root_page = root_page
+        self.max_depth = max_depth
+        self.wait = wait
 
+        self.queue: deque[tuple[str, int]] = deque()
+        self.visited_ids: set[int] = set()
+        self.seen_phrases: set[str] = set()
 
-def format_phrase(phrase: str) -> str:
-    parts = re.split(r"[\s_]+", phrase.strip())
-    parts = [p.capitalize() for p in parts if p]
+    def run(self) -> None:
+        root_info = self.root_page.get_info()
+        if root_info is None:
+            print(f"No article found for '{self.root_page.phrase}'")
+            return
 
-    return "_".join(parts)
+        root_title = root_info[1]
+        self.queue.append((root_title, 0))
+        self.seen_phrases.add(root_title)
 
+        while self.queue:
+            self._process_phrase()
+            time.sleep(self.wait)
 
-def normalize_phrase_from_href(href: str) -> str | None:
-    if not href.startswith(WIKI_PREFIX):
-        return None
+    def _process_phrase(self) -> None:
+        phrase, depth = self.queue.popleft()
+        page = WikiPage(phrase)
 
-    # drop search/edit/etc parameters
-    if "?" in href:
-        return None
+        info = page.get_info()
+        if info is None:
+            return
 
-    phrase = href[len(WIKI_PREFIX) :]
+        page_id, title = info
+        if page_id in self.visited_ids:
+            return
 
-    if phrase.startswith(BLOCKED_PREFIXES):
-        return None
+        content = page.get_content()
+        if content is None:
+            print(f"No content in {title} - skipping")
+            return
 
-    return phrase
+        self.visited_ids.add(page_id)
+        print(title)
+        CountWordsMode(page).run()
 
+        if depth < self.max_depth:
+            self._enqueue_links(page, depth)
 
-def extract_link_phrases(content: Tag) -> set[str]:
-    phrases = set()
+    def _enqueue_links(self, page: WikiPage, depth: int) -> None:
+        link_phrases = page.get_link_phrases()
+        if not link_phrases:
+            return
 
-    for a in content.select("a[href]"):
-
-        href = a["href"]
-
-        if isinstance(href, list):
-            href = "".join(href)
-
-        phrase = normalize_phrase_from_href(href)
-        if phrase:
-            phrases.add(phrase)
-
-    return phrases
-
-
-def run_auto_count_words(
-    starter_phrase: str,
-    max_depth: int,
-    wait: float,
-):
-    starter_phrase = format_phrase(starter_phrase)
-    queue = deque([(starter_phrase, 0)])
-    visited = {starter_phrase}
-
-    while queue:
-        phrase, depth = queue.popleft()
-
-        print(phrase)
-
-        content = WikiPage(phrase).fetch_content()
-
-        if depth < max_depth:
-            for link_phrase in extract_link_phrases(content):
-                if link_phrase not in visited:
-                    visited.add(link_phrase)
-                    queue.append((link_phrase, depth + 1))
-
-        run_count_words(content)
-        time.sleep(wait)
+        for phrase in link_phrases:
+            if phrase not in self.seen_phrases:
+                self.seen_phrases.add(phrase)
+                self.queue.append((phrase, depth + 1))

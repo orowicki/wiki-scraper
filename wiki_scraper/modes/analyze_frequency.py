@@ -4,135 +4,105 @@ import matplotlib.pyplot as plt
 from wordfreq import top_n_list, zipf_frequency
 import json
 
-WORD_COUNTS = "word-counts.json"
-LANG = "en"
-LANGUAGE = "English"
-MAX_LANG_WORDS = 10_000
 
+class AnalyzeFrequencyMode:
+    WORD_COUNTS_FILE = "word-counts.json"
+    LANG = "en"
+    LANGUAGE_NAME = "English"
+    MAX_LANG_WORDS = 10_000
 
-def load_word_counts() -> dict[str, int]:
-    with open(WORD_COUNTS, "r", encoding="utf-8") as f:
-        return json.load(f)
+    def __init__(self, mode: str, count: int, chart_path: str | None = None):
+        self.mode = mode
+        self.count = count
+        self.chart_path = chart_path
 
+        self.word_counts: dict[str, int] = {}
+        self.article_norms: dict[str, float] = {}
+        self.lang_norms: dict[str, float] = {}
 
-def get_normalized_article_counts(
-    word_counts: dict[str, int],
-) -> dict[str, float]:
-    if not word_counts:
-        raise ValueError("Empty word counts")
+    def run(self):
+        self.load_word_counts()
+        self.normalize_article_counts()
+        self.normalize_lang_counts()
 
-    max_freq = max(word_counts.values())
-    return {word: count / max_freq for word, count in word_counts.items()}
+        if self.mode == "article":
+            table = self._get_table_article_mode()
+        elif self.mode == "language":
+            table = self._get_table_lang_mode()
+        else:
+            raise ValueError("mode must be 'article' or 'language'")
 
+        print(table)
+        if self.chart_path is not None:
+            self.plot_comparison(table)
 
-def get_normalized_lang_counts() -> dict[str, float]:
-    lang_words = top_n_list(LANG, MAX_LANG_WORDS)
-    lang_zipf = {w: zipf_frequency(w, LANG) for w in lang_words}
-    lang_max = max(lang_zipf.values())
-    return {word: freq / lang_max for word, freq in lang_zipf.items()}
+    def load_word_counts(self):
+        with open(self.WORD_COUNTS_FILE, "r", encoding="utf-8") as f:
+            self.word_counts = json.load(f)
 
+    def normalize_article_counts(self):
+        if self.word_counts is None:
+            raise ValueError("Empty word counts")
+        max_freq = max(self.word_counts.values())
+        self.article_norms = {
+            w: c / max_freq for w, c in self.word_counts.items()
+        }
 
-def get_table_article_mode(
-    article_norms,
-    lang_norms,
-    count: int,
-) -> pd.DataFrame:
-    rows = []
+    def normalize_lang_counts(self):
+        lang_words = top_n_list(self.LANG, self.MAX_LANG_WORDS)
+        lang_zipf = {w: zipf_frequency(w, self.LANG) for w in lang_words}
+        lang_max = max(lang_zipf.values())
+        self.lang_norms = {w: f / lang_max for w, f in lang_zipf.items()}
 
-    top_articles = sorted(
-        article_norms.items(),
-        key=lambda x: x[1],
-        reverse=True,
-    )[:count]
+    def _get_table_article_mode(self) -> pd.DataFrame:
+        rows = []
+        for word, freq in sorted(
+            self.article_norms.items(), key=lambda x: x[1], reverse=True
+        )[: self.count]:
+            rows.append(
+                {
+                    "word": word,
+                    "frequency in the article": freq,
+                    "frequency in wiki language": self.lang_norms.get(
+                        word, np.nan
+                    ),
+                }
+            )
 
-    for word, freq in top_articles:
-        rows.append(
-            {
-                "word": word,
-                "frequency in the article": freq,
-                "frequency in wiki language": lang_norms.get(word, np.nan),
-            }
-        )
+        return pd.DataFrame(rows)
 
-    return pd.DataFrame(rows)
+    def _get_table_lang_mode(self) -> pd.DataFrame:
+        rows = []
+        for word, freq in sorted(
+            self.lang_norms.items(), key=lambda x: x[1], reverse=True
+        )[: self.count]:
+            rows.append(
+                {
+                    "word": word,
+                    "frequency in the article": self.article_norms.get(
+                        word, np.nan
+                    ),
+                    "frequency in wiki language": freq,
+                }
+            )
 
+        return pd.DataFrame(rows)
 
-def get_table_lang_mode(
-    article_norms,
-    lang_norms,
-    count: int,
-) -> pd.DataFrame:
-    rows = []
+    def plot_comparison(self, table: pd.DataFrame):
+        words = table["word"].astype(str).tolist()
+        article_freqs = table["frequency in the article"].fillna(0).to_numpy()
+        lang_freqs = table["frequency in wiki language"].fillna(0).to_numpy()
+        x = np.arange(len(words))
+        width = 0.4
 
-    top_lang = sorted(
-        lang_norms.items(),
-        key=lambda x: x[1],
-        reverse=True,
-    )[:count]
-
-    for word, freq in top_lang:
-        rows.append(
-            {
-                "word": word,
-                "frequency in the article": article_norms.get(word, np.nan),
-                "frequency in wiki language": freq,
-            }
-        )
-
-    return pd.DataFrame(rows)
-
-
-def plot_frequency_comparison(
-    table: pd.DataFrame,
-    path: str,
-    mode: str,
-):
-    words = table["word"].astype(str).tolist()
-    article_freqs = table["frequency in the article"].fillna(0).to_numpy()
-    lang_freqs = table["frequency in wiki language"].fillna(0).to_numpy()
-
-    x = np.arange(len(words))
-    width = 0.4
-
-    plt.figure(figsize=(max(10, len(words) * 0.6), 6))
-
-    plt.bar(
-        x - width / 2,
-        article_freqs,
-        width,
-        label="Wiki",
-    )
-    plt.bar(
-        x + width / 2,
-        lang_freqs,
-        width,
-        label=LANGUAGE,
-    )
-
-    plt.xticks(x, words, rotation=45, ha="right")
-    plt.ylabel("Normalized frequency")
-    plt.xlabel("Word")
-    plt.title(f"Word frequency comparison ({mode} mode)")
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig(path)
-    plt.close()
-
-
-def run_analyze_frequency(mode: str, count: int, path: str | None = None):
-    word_counts = load_word_counts()
-    article_norms = get_normalized_article_counts(word_counts)
-    lang_norms = get_normalized_lang_counts()
-
-    if mode == "article":
-        table = get_table_article_mode(article_norms, lang_norms, count)
-    elif mode == "language":
-        table = get_table_lang_mode(article_norms, lang_norms, count)
-    else:
-        raise ValueError("mode must be 'article' or 'language'")
-
-    print(table)
-
-    if path:
-        plot_frequency_comparison(table, path, mode)
+        plt.figure(figsize=(max(10, len(words) * 0.6), 6))
+        plt.bar(x - width / 2, article_freqs, width, label="Wiki")
+        plt.bar(x + width / 2, lang_freqs, width, label=self.LANGUAGE_NAME)
+        plt.xticks(x, words, rotation=45, ha="right")
+        plt.ylabel("Normalized frequency")
+        plt.xlabel("Word")
+        plt.title(f"Word frequency comparison ({self.mode} mode)")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(self.chart_path)
+        plt.close()

@@ -1,57 +1,40 @@
-from bs4 import BeautifulSoup
 import pandas as pd
-from io import StringIO
-import re
-from html import unescape
+from page_fetcher import WikiPage
 
 
-def normalize_spans(html: str) -> str:
-    html = unescape(html)
+class TableMode:
+    def __init__(self, page: WikiPage, table_number: int = 1):
+        self.page = page
+        self.table_number = table_number
 
-    def fix(match):
-        value = match.group(2)
-        digits = re.findall(r"\d+", value)
-        return f'{match.group(1)}="{digits[0] if digits else "1"}"'
+    def run(self) -> None:
+        tables = self.page.get_tables()
+        if tables is None:
+            return
 
-    html = re.sub(r'(colspan|rowspan)\s*=\s*"?([^"> ]*)"?', fix, html)
+        if self.table_number > len(tables):
+            print(
+                f"Table no. {self.table_number} doesn't exist, "
+                f"highest is {len(tables)}."
+            )
+            return
 
-    return html
+        df = tables[self.table_number - 1]
+        df.to_csv(f"{self.page.phrase}.csv", index=False, encoding="utf-8")
+        print(df)
 
+        counts = self._get_counts_table(df)
+        print(f"\nValue counts:\n{counts.to_string(index=False)}")
 
-def get_table(soup: BeautifulSoup, n: int) -> pd.DataFrame:
-    raw_html = str(soup)
-    clean_html = normalize_spans(raw_html)
+    def _clean_series(self, series) -> pd.Series:
+        series = series.str.strip()
+        series = series[series != ""]
+        series = series[series.str.lower() != "nan"]
+        return series
 
-    dsf = pd.read_html(StringIO(clean_html))
+    def _get_counts_table(self, df: pd.DataFrame) -> pd.DataFrame:
+        values = self._clean_series(pd.Series(df.values.ravel()).astype(str))
 
-    if n > len(dsf):
-        raise ValueError(
-            f"Table no. {n} doesn't exist in this article, "
-            f"highest no. is {len(dsf)}"
-        )
-
-    return dsf[n - 1]
-
-
-def clean_series(series) -> pd.Series:
-    series = series.str.strip()
-    series = series[series != ""]
-    series = series[series.str.lower() != "nan"]
-    return series
-
-
-def get_counts_table(df: pd.DataFrame):
-    values = clean_series(pd.Series(df.values.ravel()).astype(str))
-
-    counts = values.value_counts().reset_index()
-    counts.columns = ["Value", "Count"]
-    return counts
-
-
-def run_table(phrase: str, soup: BeautifulSoup, n: int) -> None:
-    df = get_table(soup, n)
-    df.to_csv(f"{phrase}.csv", index=False, encoding="utf-8")
-    print(df)
-
-    counts = get_counts_table(df)
-    print(f"\nValue counts:\n{counts.to_string(index=False)}")
+        counts = values.value_counts().reset_index()
+        counts.columns = ["Value", "Count"]
+        return counts
