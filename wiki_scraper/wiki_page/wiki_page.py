@@ -1,3 +1,11 @@
+"""
+WikiPage module for extracting structured data from Wiki articles.
+
+Provides the ``WikiPage`` class, which handles fetching HTML from a URL or
+file, parsing it with BeautifulSoup, and extracting paragraphs, links, tables,
+word counts, and article metadata.
+"""
+
 from pathlib import Path
 from collections import Counter
 
@@ -11,10 +19,35 @@ from .links import extract_internal_link_phrases
 from .tables import extract_tables
 from .word_counts import extract_word_counts
 
-BASE_URL = "https://minecraft.wiki/w/"
-
 
 class WikiPage:
+    """
+    Represents a single Wiki article and provides methods to extract content
+    and metadata.
+
+    Parameters
+    ----------
+    phrase : str, optional
+        The article title to fetch (automatically converted to URL).
+    base_url : str, default: "https://minecraft.wiki/w/"
+        Base URL for the wiki.
+    forced_url : str, optional
+        Explicit URL to fetch instead of constructing from `phrase`.
+    html_file : str or Path, optional
+        Path to a local HTML file to read instead of fetching from the web.
+
+    Attributes
+    ----------
+    phrase : str
+        Resolved phrase/title of the article.
+    url : str | None
+        Resolved URL of the article (if any).
+    html_file : Path | None
+        Path to local HTML file (if any).
+    """
+
+    BASE_URL = "https://minecraft.wiki/w/"
+
     def __init__(
         self,
         phrase: str | None = None,
@@ -44,6 +77,15 @@ class WikiPage:
             raise ValueError("Must provide phrase, forced_url or html_file")
 
     def get_html(self) -> str | None:
+        """
+        Return the HTML of the page, reading from file or fetching from URL.
+
+        Returns
+        -------
+        str | None
+            HTML content, or None if fetching a URL returns 404.
+        """
+
         if self._html is not None:
             return self._html
 
@@ -61,6 +103,15 @@ class WikiPage:
         return html
 
     def get_soup(self) -> BeautifulSoup | None:
+        """
+        Parse the HTML into a BeautifulSoup object.
+
+        Returns
+        -------
+        BeautifulSoup | None
+            Parsed HTML, or None if the article does not exist.
+        """
+
         if self._soup is not None:
             return self._soup
 
@@ -76,6 +127,15 @@ class WikiPage:
         return soup
 
     def get_content(self) -> Tag | None:
+        """
+        Return the main content container of the article.
+
+        Returns
+        -------
+        Tag | None
+            BeautifulSoup Tag representing article content, or None if missing.
+        """
+
         if self._content is not None:
             return self._content
 
@@ -93,6 +153,15 @@ class WikiPage:
         return content
 
     def get_info(self) -> tuple[int, str] | None:
+        """
+        Extract the article ID and canonical title from HTML.
+
+        Returns
+        -------
+        tuple[int, str] | None
+            (page_id, page_name) or None if not found.
+        """
+
         html = self.get_html()
         if html is None:
             return None
@@ -100,6 +169,15 @@ class WikiPage:
         return extract_id_and_title(html)
 
     def get_paragraphs(self) -> list[Tag] | None:
+        """
+        Extract meaningful paragraphs from the article content.
+
+        Returns
+        -------
+        list[Tag] | None
+            List of <p> Tags, or None if content is missing.
+        """
+
         content = self.get_content()
         if content is None:
             return None
@@ -107,6 +185,15 @@ class WikiPage:
         return extract_paragraphs(content)
 
     def get_link_phrases(self) -> set[str] | None:
+        """
+        Extract internal Wiki link phrases from the article content.
+
+        Returns
+        -------
+        set[str] | None
+            Set of linked article phrases, or None if content is missing.
+        """
+
         content = self.get_content()
         if content is None:
             return None
@@ -114,6 +201,16 @@ class WikiPage:
         return extract_internal_link_phrases(content)
 
     def get_tables(self) -> list[DataFrame] | None:
+        """
+        Extract all HTML tables from the article.
+
+        Returns
+        -------
+        list[DataFrame] | None
+            List of pandas DataFrames representing tables, or
+            None if HTML missing.
+        """
+
         html = self.get_html()
         if html is None:
             return None
@@ -121,6 +218,15 @@ class WikiPage:
         return extract_tables(html)
 
     def get_word_counts(self) -> Counter | None:
+        """
+        Extract word counts from the article content.
+
+        Returns
+        -------
+        Counter | None
+            Counter of words, or None if content is missing.
+        """
+
         content = self.get_content()
         if content is None:
             return None

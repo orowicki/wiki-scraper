@@ -1,3 +1,10 @@
+"""
+HTML fetching utilities for Wiki articles.
+
+Provides a requests session with default headers and functions
+to fetch HTML content safely, handling 404 errors gracefully.
+"""
+
 import requests
 from requests.exceptions import HTTPError
 
@@ -11,6 +18,15 @@ _session: requests.Session | None = None
 
 
 def get_session() -> requests.Session:
+    """
+    Get a singleton requests.Session configured with default headers.
+
+    Returns
+    -------
+    requests.Session
+        A persistent session object for making HTTP requests.
+    """
+
     global _session
     if _session is None:
         s = requests.Session()
@@ -20,14 +36,26 @@ def get_session() -> requests.Session:
     return _session
 
 
-def close_session() -> None:
-    global _session
-    if _session is not None:
-        _session.close()
-        _session = None
-
-
 def fetch_html(url: str) -> str | None:
+    """
+    Fetch the HTML content of a URL using the global session.
+
+    Parameters
+    ----------
+    url : str
+        The URL of the page to fetch.
+
+    Returns
+    -------
+    str | None
+        The HTML content as a string, or None if the URL returns a 404.
+
+    Raises
+    ------
+    HTTPError
+        For HTTP errors other than 404.
+    """
+
     try:
         response = get_session().get(url, timeout=TIMEOUT)
         response.raise_for_status()
