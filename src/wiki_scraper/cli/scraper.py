@@ -2,7 +2,7 @@
 Scraper module for running the program.
 
 Provides the ``Scraper`` class which parses args and builds
-the correct mode on initialization, and provides a ``run`` method.
+the mode object on initialization, and provides a ``run`` method.
 """
 
 from .args import parse_args

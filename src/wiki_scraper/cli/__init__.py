@@ -1,11 +1,11 @@
 """
 cli
 ___
-The ``cli`` package provides ways to parse args, validate them,
+The ``cli`` package provides ways to parse args,
 build a mode object from them and run the program.
 
 Functionality:
-- parse arguments and validate them
+- parse arguments
 - create mode objects from arguments
 - create a Scraper class and use it to run the program
 """

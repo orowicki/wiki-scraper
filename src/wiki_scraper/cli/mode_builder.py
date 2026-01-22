@@ -21,33 +21,22 @@ def build_mode(args: Namespace):
     """
     Returns a mode object initialized with passed args.
 
-    Assumes args are valid, chooses which mode to return based
-    on the args from the mutually exclusive modes group.
+    Chooses which mode to return based
+    on the subparsers arg (args.command).
     """
-    if args.summary:
-        return SummaryMode(
-            WikiPage(args.summary),
-        )
-    elif args.table:
-        return TableMode(
-            WikiPage(args.table),
-            args.number,
-        )
-    elif args.count_words:
-        return CountWordsMode(
-            WikiPage(args.count_words),
-        )
-    elif args.auto_count_words:
-        return AutoCountWordsMode(
-            WikiPage(args.auto_count_words),
-            args.depth,
-            args.wait,
-        )
-    elif args.analyze_relative_word_frequency:
-        return AnalyzeFrequencyMode(
-            args.mode,
-            args.count,
-            args.chart,
-        )
-    else:
-        raise ValueError("Unknown mode")
+
+    match args.command:
+        case "summary":
+            return SummaryMode(WikiPage(args.phrase))
+        case "table":
+            return TableMode(WikiPage(args.phrase), args.number)
+        case "count-words":
+            return CountWordsMode(WikiPage(args.phrase))
+        case "auto-count-words":
+            return AutoCountWordsMode(
+                WikiPage(args.phrase), args.depth, args.wait
+            )
+        case "analyze-relative-word-frequency":
+            return AnalyzeFrequencyMode(args.mode, args.count, args.chart)
+        case _:
+            raise ValueError("Unknown mode")
