@@ -13,7 +13,8 @@ PAGE_NAME_RE = re.compile(r'"wg(PageName|CanonicalTitle)"\s*:\s*"([^"]+)"')
 
 def extract_id_and_title(html: str) -> tuple[int, str] | None:
     """
-    Extract the article ID and page name from a Wiki article HTML string.
+    Extract the article ID and page name from a Wiki article HTML
+    string.
 
     Parameters
     ----------
@@ -25,15 +26,7 @@ def extract_id_and_title(html: str) -> tuple[int, str] | None:
     tuple[int, str] | None
         A tuple containing the article ID and the page name, or
         None if either could not be found.
-
-    Examples
-    --------
-    >>> html = '<script>var wgArticleId = 12345;
-                var wgPageName = "Stone";</script>'
-    >>> extract_id_and_title(html)
-    (12345, 'Stone')
     """
-
     id_match = PAGE_ID_RE.search(html)
     name_match = PAGE_NAME_RE.search(html)
 

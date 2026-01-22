@@ -17,9 +17,9 @@ def extract_paragraphs(content: Tag) -> list[Tag]:
     """
     Extract the main paragraphs from a Wiki article content Tag.
 
-    This function filters out paragraphs that are inside tables, sidebars,
-    figure captions, infoboxes, navigation boxes, table of contents, 
-    or hatnotes.
+    This function filters out paragraphs that are inside tables,
+    sidebars, figure captions, infoboxes, navigation boxes,
+    table of contents, or hatnotes.
 
     Parameters
     ----------
@@ -31,7 +31,6 @@ def extract_paragraphs(content: Tag) -> list[Tag]:
     list[Tag]
         A list of bs4 Tag objects representing the filtered paragraphs.
     """
-
     paragraphs = content.find_all("p")
 
     skipped = set(content.select(SKIP_SELECTOR))

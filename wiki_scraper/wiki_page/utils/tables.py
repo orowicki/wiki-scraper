@@ -5,10 +5,11 @@ Provides a function to extract tables the HTML of a Wiki article and
 convert them into pandas DataFrames.
 """
 
-import pandas as pd
 import re
 from io import StringIO
 from html import unescape
+
+import pandas as pd
 
 
 def extract_tables(html: str) -> list[pd.DataFrame]:
@@ -29,7 +30,6 @@ def extract_tables(html: str) -> list[pd.DataFrame]:
     list[pandas.DataFrame]
         List of DataFrames parsed from the HTML tables.
     """
-
     html = unescape(html)
 
     def fix(match):

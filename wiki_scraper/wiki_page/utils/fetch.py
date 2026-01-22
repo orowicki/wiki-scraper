@@ -26,7 +26,6 @@ def get_session() -> requests.Session:
     requests.Session
         A persistent session object for making HTTP requests.
     """
-
     global _session
     if _session is None:
         s = requests.Session()
@@ -55,7 +54,6 @@ def fetch_html(url: str) -> str | None:
     HTTPError
         For HTTP errors other than 404.
     """
-
     try:
         response = get_session().get(url, timeout=TIMEOUT)
         response.raise_for_status()

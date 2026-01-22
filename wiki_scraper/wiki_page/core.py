@@ -1,9 +1,9 @@
 """
-WikiPage module for extracting structured data from Wiki articles.
+core module for extracting structured data from Wiki articles.
 
-Provides the ``WikiPage`` class, which handles fetching HTML from a URL or
-file, parsing it with BeautifulSoup, and extracting paragraphs, links, tables,
-word counts, and article metadata.
+Provides the ``WikiPage`` class, which handles fetching HTML from a URL
+or file, parsing it with BeautifulSoup, and extracting paragraphs,
+links, tables, word counts, and article metadata.
 """
 
 from pathlib import Path
@@ -12,18 +12,20 @@ from collections import Counter
 from bs4 import BeautifulSoup, Tag
 from pandas import DataFrame
 
-from .fetch import fetch_html
-from .info import extract_id_and_title
-from .paragraphs import extract_paragraphs
-from .links import extract_internal_link_phrases
-from .tables import extract_tables
-from .word_counts import extract_word_counts
+from .utils import (
+    fetch_html,
+    extract_id_and_title,
+    extract_paragraphs,
+    extract_internal_link_phrases,
+    extract_tables,
+    extract_word_counts,
+)
 
 
 class WikiPage:
     """
-    Represents a single Wiki article and provides methods to extract content
-    and metadata.
+    Represents a single Wiki article and provides methods to extract
+    content and metadata.
 
     Parameters
     ----------
@@ -34,7 +36,8 @@ class WikiPage:
     forced_url : str, optional
         Explicit URL to fetch instead of constructing from `phrase`.
     html_file : str or Path, optional
-        Path to a local HTML file to read instead of fetching from the web.
+        Path to a local HTML file to read instead of fetching from
+        the web.
 
     Attributes
     ----------
@@ -47,6 +50,8 @@ class WikiPage:
     """
 
     BASE_URL = "https://minecraft.wiki/w/"
+    NO_ARTICLE = ".noarticletext"
+    CONTENT_TAG = "#mw-content-text .mw-parser-output"
 
     def __init__(
         self,
@@ -78,14 +83,14 @@ class WikiPage:
 
     def get_html(self) -> str | None:
         """
-        Return the HTML of the page, reading from file or fetching from URL.
+        Return the HTML of the page, reading from file or
+        fetching from URL.
 
         Returns
         -------
         str | None
             HTML content, or None if fetching a URL returns 404.
         """
-
         if self._html is not None:
             return self._html
 
@@ -111,7 +116,6 @@ class WikiPage:
         BeautifulSoup | None
             Parsed HTML, or None if the article does not exist.
         """
-
         if self._soup is not None:
             return self._soup
 
@@ -120,7 +124,7 @@ class WikiPage:
             return None
 
         soup = BeautifulSoup(html, "html.parser")
-        if soup.select_one(".noarticletext") is not None:
+        if soup.select_one(self.NO_ARTICLE) is not None:
             return None
 
         self._soup = soup
@@ -133,9 +137,9 @@ class WikiPage:
         Returns
         -------
         Tag | None
-            BeautifulSoup Tag representing article content, or None if missing.
+            BeautifulSoup Tag representing article content, or None if
+            missing.
         """
-
         if self._content is not None:
             return self._content
 
@@ -143,7 +147,7 @@ class WikiPage:
         if soup is None:
             return None
 
-        content = soup.select_one("#mw-content-text .mw-parser-output")
+        content = soup.select_one(self.CONTENT_TAG)
         if content is None:
             raise RuntimeError(
                 "Content container not found - site incompatible?"
@@ -161,7 +165,6 @@ class WikiPage:
         tuple[int, str] | None
             (page_id, page_name) or None if not found.
         """
-
         html = self.get_html()
         if html is None:
             return None
@@ -177,7 +180,6 @@ class WikiPage:
         list[Tag] | None
             List of <p> Tags, or None if content is missing.
         """
-
         content = self.get_content()
         if content is None:
             return None
@@ -191,9 +193,9 @@ class WikiPage:
         Returns
         -------
         set[str] | None
-            Set of linked article phrases, or None if content is missing.
+            Set of linked article phrases, or None if content is
+            missing.
         """
-
         content = self.get_content()
         if content is None:
             return None
@@ -210,7 +212,6 @@ class WikiPage:
             List of pandas DataFrames representing tables, or
             None if HTML missing.
         """
-
         html = self.get_html()
         if html is None:
             return None
@@ -226,7 +227,6 @@ class WikiPage:
         Counter | None
             Counter of words, or None if content is missing.
         """
-
         content = self.get_content()
         if content is None:
             return None

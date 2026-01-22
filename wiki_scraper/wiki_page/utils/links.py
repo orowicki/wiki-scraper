@@ -36,7 +36,6 @@ def normalize_phrase_from_href(href: str) -> str | None:
         The normalized phrase if valid, or None if the link is external,
         points to a blocked namespace, or contains query parameters.
     """
-
     if not href.startswith(WIKI_PREFIX) or "?" in href:
         return None
 
@@ -51,7 +50,8 @@ def normalize_phrase_from_href(href: str) -> str | None:
 
 def extract_internal_link_phrases(content: Tag) -> set[str]:
     """
-    Extract all normalized internal link phrases from a Wiki article content.
+    Extract all normalized internal link phrases from
+    a Wiki article's content.
 
     Parameters
     ----------
@@ -61,10 +61,9 @@ def extract_internal_link_phrases(content: Tag) -> set[str]:
     Returns
     -------
     set[str]
-        A set of normalized internal link phrases, ignoring external links,
-        query parameters, and blocked namespaces.
+        A set of normalized internal link phrases, ignoring external
+        links, query parameters, and blocked namespaces.
     """
-
     phrases = set()
 
     for a in content.select("a[href]"):

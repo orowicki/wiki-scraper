@@ -6,6 +6,7 @@ convert them into a Counter.
 """
 
 from collections import Counter
+
 import regex
 from bs4 import Tag
 
@@ -29,7 +30,6 @@ def extract_word_counts(content: Tag) -> Counter:
     Counter
         a Counter mapping each word to its frequency in the content
     """
-
     text = content.get_text(separator=" ", strip=True).lower()
     words = regex.findall(r"\b\p{L}+(?:[-']\p{L}+)*\b", text)
 
