@@ -1,11 +1,8 @@
 """
-cli.py
-------
-Provides a way to parse CLI arguments and validate them.
+args module for parsing CLI arguments and validating them.
 
-Functions:
-- parse_args: builds a parser, parses args, validates them,
-              returns the args namespace.
+Provides the ``parse_args`` function which builds a parser, parses args,
+validates them, then returs the args namespace.
 """
 
 import argparse
@@ -13,7 +10,7 @@ import argparse
 __all__ = ["parse_args"]
 
 
-# Modes mapped to allowed arguments per mode, with `bool required` per arg
+# Modes mapped to allowed arguments per mode, with `bool required`
 MODE_ARGS = {
     "summary": {
         "summary": True,
@@ -40,25 +37,20 @@ MODE_ARGS = {
 }
 
 
-def _build_parser() -> argparse.ArgumentParser:
-    """Builds and returns the argument parser for the CLI."""
-
-    parser = argparse.ArgumentParser(
-        prog="wiki_scraper",
-        description="Scrape and analyze pages from minecraft.wiki.",
-        usage=(
-            "wiki_scraper.py [-h] <mode> [options]:\n"
-            "modes:\n"
-            "  --summary PHRASE\n"
-            "  --table PHRASE --number N [--first-row-is-header]\n"
-            "  --count-words PHRASE\n"
-            "  --analyze-relative-word-frequency --mode {article,language} "
-            "--count N [--chart PATH]\n"
-            "  --auto-count-words STARTER_PHRASE --depth N --wait T"
-        ),
+def _build_usage_string() -> str:
+    return (
+        "wiki_scraper.py [-h] <mode> [options]:\n"
+        "modes:\n"
+        "  --summary PHRASE\n"
+        "  --table PHRASE --number N [--first-row-is-header]\n"
+        "  --count-words PHRASE\n"
+        "  --analyze-relative-word-frequency --mode {article,language} "
+        "--count N [--chart PATH]\n"
+        "  --auto-count-words STARTER_PHRASE --depth N --wait T"
     )
 
-    # Mutually exclusive program modes
+
+def _add_modes(parser: argparse.ArgumentParser) -> None:
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument(
         "--summary",
@@ -89,7 +81,8 @@ def _build_parser() -> argparse.ArgumentParser:
         "and count words in them",
     )
 
-    # --table options
+
+def _add_table_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--number",
         type=int,
@@ -103,7 +96,8 @@ def _build_parser() -> argparse.ArgumentParser:
         help="treat first row of the table as column headers",
     )
 
-    # --analyze-relative-word-frequency options
+
+def _add_analyze_freq_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--mode",
         choices=["article", "language"],
@@ -122,7 +116,8 @@ def _build_parser() -> argparse.ArgumentParser:
         "relative frequency analysis",
     )
 
-    # --auto-count-words options
+
+def _add_auto_count_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--depth",
         type=int,
@@ -136,6 +131,20 @@ def _build_parser() -> argparse.ArgumentParser:
         help="number of seconds to wait between phrases "
         "during --auto-count-words",
     )
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Builds and returns the argument parser for the CLI."""
+    parser = argparse.ArgumentParser(
+        prog="wiki_scraper",
+        description="Scrape and analyze pages from minecraft.wiki.",
+        usage=_build_usage_string(),
+    )
+
+    _add_modes(parser)
+    _add_table_options(parser)
+    _add_analyze_freq_options(parser)
+    _add_auto_count_options(parser)
 
     return parser
 
@@ -166,7 +175,7 @@ def _check_invalid_args(
             f"--{a.replace('_', '-')}" for a in sorted(invalid_args)
         )
         raise ValueError(
-            f"Invalid arguments for --{mode.replace('_', '-')}: {invalid_flags}"
+            f"Invalid args for --{mode.replace('_', '-')}: {invalid_flags}"
         )
 
 
@@ -184,16 +193,26 @@ def _check_missing_args(
             f"--{a.replace('_', '-')}" for a in sorted(missing_args)
         )
         raise ValueError(
-            f"Missing arguments for --{mode.replace('_', '-')}: {missing_flags}"
+            f"Missing args for --{mode.replace('_', '-')}: {missing_flags}"
         )
 
 
 def _validate_args(args: argparse.Namespace) -> None:
-    """Validates that correct arguments were used for the selected mode."""
-
+    """
+    Validates that correct arguments were used for the selected mode.
+    """
     mode = _detect_mode(args)
 
-    set_args = {k for k, v in vars(args).items() if v not in (None, False)}
+    set_args = set()
+    for k, v in vars(args).items():
+        v = getattr(args, k, None)
+        if isinstance(v, bool):
+            if v:
+                set_args.add(k)
+        else:
+            if v is not None:
+                set_args.add(k)
+
     allowed_args = set(MODE_ARGS[mode].keys())
     required_args = {k for k, req in MODE_ARGS[mode].items() if req}
 
@@ -203,7 +222,6 @@ def _validate_args(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     """Parse and validate CLI arguments."""
-
     parser = _build_parser()
     args = parser.parse_args()
     _validate_args(args)
