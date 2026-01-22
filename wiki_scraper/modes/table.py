@@ -6,8 +6,10 @@ Wiki article to a CSV file and prints the value counts from the table.
 """
 
 from typing import Any
+
 import pandas as pd
-from wiki_page.wiki_page import WikiPage
+
+from ..wiki_page import WikiPage
 
 
 class TableMode:
@@ -29,12 +31,12 @@ class TableMode:
 
     def run(self) -> None:
         """
-        Save the selected table to a CSV file and print its value counts.
+        Save the selected table to a CSV file and print its value
+        counts.
 
-        If the article has no tables or the table number is out of range,
-        an informative message is printed instead.
+        If the article has no tables or the table number is out of
+        range, an informative message is printed instead.
         """
-
         tables = self.page.get_tables()
         if tables is None:
             print(f"No tables available for {self.page.phrase}")
@@ -69,4 +71,3 @@ class TableMode:
 
     def _output_path(self) -> str:
         return f"{self.page.phrase}.csv"
-

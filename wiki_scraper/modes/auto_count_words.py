@@ -1,15 +1,16 @@
 """
 Auto count words mode for Wiki articles.
 
-Provides the ``AutoCountWordsMode`` class, which updates a JSON file with
-word counts from a Wiki article then repeats for every internal link found
-within it, up to a certain depth.
+Provides the ``AutoCountWordsMode`` class, which updates a JSON file
+with word counts from a Wiki article then repeats for every internal
+link found within it, up to a certain depth.
 """
 
-from modes.count_words import CountWordsMode
-from wiki_page.wiki_page import WikiPage
 from collections import deque
 import time
+
+from ..wiki_page import WikiPage
+from .count_words import CountWordsMode
 
 
 class AutoCountWordsMode:
@@ -40,15 +41,15 @@ class AutoCountWordsMode:
 
     def run(self) -> None:
         """
-        Update a JSON file with word counts from every article it encounters.
+        Update a JSON file with word counts from every article it
+        encounters.
 
-        Starts from the root article and explores internal links in it and every
-        subsequent article until max depth is reached.
+        Starts from the root article and explores internal links in it
+        and every subsequent article until max depth is reached.
 
-        If the root article has no content, an informative message is printed
-        instead.
+        If the root article has no content, an informative message is
+        printed instead.
         """
-
         root_info = self.root_page.get_info()
         if root_info is None:
             print(f"No article available for '{self.root_page.phrase}'")

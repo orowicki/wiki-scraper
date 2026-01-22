@@ -1,14 +1,15 @@
 """
 Count words mode for Wiki articles.
 
-Provides the ``CountWordsMode`` class, which extracts word
-counts from a Wiki article and updates a JSON file with aggregated results.
+Provides the ``CountWordsMode`` class, which extracts word counts
+from a Wiki article and updates a JSON file with aggregated results.
 """
 
 from collections import Counter
 import json
 from pathlib import Path
-from wiki_page.wiki_page import WikiPage
+
+from ..wiki_page import WikiPage
 
 
 class CountWordsMode:
@@ -33,7 +34,6 @@ class CountWordsMode:
         If the article has no content, an informative message is printed
         instead.
         """
-
         counts = self.page.get_word_counts()
         if counts is None:
             print(f"No word counts available for {self.page.phrase}")

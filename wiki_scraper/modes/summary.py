@@ -5,7 +5,7 @@ Provides the ``SummaryMode`` class, which prints the first
 paragraph (summary) of a Wiki article.
 """
 
-from wiki_page.wiki_page import WikiPage
+from ..wiki_page import WikiPage
 
 
 class SummaryMode:
@@ -28,7 +28,6 @@ class SummaryMode:
         If the article has no valid paragraphs, an informative message
         is printed instead.
         """
-
         paragraphs = self.page.get_paragraphs()
         if paragraphs is None:
             print(f"No paragraphs for {self.page.phrase}")

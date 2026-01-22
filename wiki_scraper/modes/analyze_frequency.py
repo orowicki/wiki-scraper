@@ -2,28 +2,31 @@
 Analyze relative word frequency mode for Wiki articles.
 
 Provides the ``AnalyzeFrequencyMode`` class, which loads word
-frequency data collected from Wiki articles, normalizes it, and compares it
-against frequency data from a reference language. Results can be displayed
-as tables and optionally visualized as charts.
+frequency data collected from Wiki articles, normalizes it, and
+compares it against frequency data from a reference language.
+Results can be displayed as tables and optionally visualized as charts.
 """
+
+import json
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from wordfreq import top_n_list, zipf_frequency
-import json
 
 
 class AnalyzeFrequencyMode:
     """
-    Analyze and compare word frequencies from Wiki articles and a language.
+    Analyze and compare word frequencies from Wiki articles and a
+    language.
 
     The analysis can be performed in two modes:
     - ``article``: focus on the most frequent words in the article
     - ``language``: focus on the most frequent words in the language
 
-    Frequencies are normalized and presented in tabular form. Optionally,
-    a bar chart comparing article and language frequencies can be generated.
+    Frequencies are normalized and presented in tabular form.
+    Optionally, a bar chart comparing article and language frequencies
+    can be generated.
 
     Parameters
     ----------
@@ -32,7 +35,8 @@ class AnalyzeFrequencyMode:
     count : int
         Number of words to include in the output
     chart_path : str or None, optional
-        Path to save the comparison chart. If ``None``, no chart is generated
+        Path to save the comparison chart.
+        If ``None``, no chart is generated
     """
 
     WORD_COUNTS_FILE = "word-counts.json"
@@ -53,15 +57,14 @@ class AnalyzeFrequencyMode:
         """
         Perform the frequency analysis and display the results.
 
-        Loads word counts from a JSON file, normalizes article and language
-        frequencies,and produces a comparison table according to the
-        selected mode.
+        Loads word counts from a JSON file, normalizes article and
+        language frequencies,and produces a comparison table according
+        to the selected mode.
         The table is printed to standard output.
 
-        If a chart path was provided, a bar chart visualizing the comparison
-        is also generated and saved.
+        If a chart path was provided, a bar chart visualizing
+        the comparison is also generated and saved.
         """
-
         self.load_word_counts()
         self.normalize_article_counts()
         self.normalize_lang_counts()
@@ -81,10 +84,9 @@ class AnalyzeFrequencyMode:
         """
         Load word count data from a JSON file.
 
-        The file is expected to contain a mapping from words to their occurrence
-        counts in Wiki articles.
+        The file is expected to contain a mapping from words to their
+        occurrence counts in Wiki articles.
         """
-
         with open(self.WORD_COUNTS_FILE, "r", encoding="utf-8") as f:
             self.word_counts = json.load(f)
 
@@ -95,7 +97,6 @@ class AnalyzeFrequencyMode:
         Frequencies are normalized by dividing each count by the maximum
         word frequency found in the article.
         """
-
         if self.word_counts is None:
             raise ValueError("Empty word counts")
         max_freq = max(self.word_counts.values())
@@ -107,11 +108,10 @@ class AnalyzeFrequencyMode:
         """
         Normalize word frequencies for the reference language.
 
-        Word frequencies are obtained using Zipf frequency values for the most
-        common words in the selected language and normalized by the maximum
-        Zipf frequency.
+        Word frequencies are obtained using Zipf frequency values for
+        the most common words in the selected language and normalized
+        by the maximum Zipf frequency.
         """
-
         lang_words = top_n_list(self.LANG, self.MAX_LANG_WORDS)
         lang_zipf = {w: zipf_frequency(w, self.LANG) for w in lang_words}
         lang_max = max(lang_zipf.values())
@@ -121,15 +121,15 @@ class AnalyzeFrequencyMode:
         """
         Generate and save a bar chart comparing word frequencies.
 
-        The chart compares normalized word frequencies from the article and
-        the reference language for the words listed in the provided table.
+        The chart compares normalized word frequencies from the article
+        and the reference language for the words listed in the
+        provided table.
 
         Parameters
         ----------
         table : pandas.DataFrame
             DataFrame containing words and their normalized frequencies.
         """
-
         words = table["word"].astype(str).tolist()
         article_freqs = table["frequency in the article"].fillna(0).to_numpy()
         lang_freqs = table["frequency in wiki language"].fillna(0).to_numpy()
