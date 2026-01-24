@@ -9,9 +9,9 @@ Results can be displayed as tables and optionally visualized as charts.
 
 import json
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from wordfreq import top_n_list, zipf_frequency
 
 
@@ -87,7 +87,7 @@ class AnalyzeFrequencyMode:
         The file is expected to contain a mapping from words to their
         occurrence counts in Wiki articles.
         """
-        with open(self.WORD_COUNTS_FILE, "r", encoding="utf-8") as f:
+        with open(self.WORD_COUNTS_FILE, encoding="utf-8") as f:
             self.word_counts = json.load(f)
 
     def normalize_article_counts(self):

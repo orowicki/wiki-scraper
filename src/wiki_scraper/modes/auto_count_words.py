@@ -6,8 +6,8 @@ with word counts from a Wiki article then repeats for every internal
 link found within it, up to a certain depth.
 """
 
-from collections import deque
 import time
+from collections import deque
 
 from ..wiki_page import WikiPage
 from .count_words import CountWordsMode

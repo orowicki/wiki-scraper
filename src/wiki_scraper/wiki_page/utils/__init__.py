@@ -15,8 +15,8 @@ Functionality:
 
 from .fetch import fetch_html, get_session
 from .info import extract_id_and_title
+from .links import extract_internal_link_phrases, normalize_phrase_from_href
 from .paragraphs import extract_paragraphs
-from .links import normalize_phrase_from_href, extract_internal_link_phrases
 from .tables import extract_tables
 from .word_counts import extract_word_counts
 

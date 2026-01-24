@@ -5,8 +5,8 @@ Provides the ``CountWordsMode`` class, which extracts word counts
 from a Wiki article and updates a JSON file with aggregated results.
 """
 
-from collections import Counter
 import json
+from collections import Counter
 from pathlib import Path
 
 from ..wiki_page import WikiPage
@@ -45,7 +45,7 @@ class CountWordsMode:
         path = Path(self.JSONPATH)
 
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 total_counts = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             total_counts = {}

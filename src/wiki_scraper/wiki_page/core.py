@@ -6,19 +6,19 @@ or file, parsing it with BeautifulSoup, and extracting paragraphs,
 links, tables, word counts, and article metadata.
 """
 
-from pathlib import Path
 from collections import Counter
+from pathlib import Path
 
 from bs4 import BeautifulSoup, Tag
 from pandas import DataFrame
 
 from .utils import (
-    fetch_html,
     extract_id_and_title,
-    extract_paragraphs,
     extract_internal_link_phrases,
+    extract_paragraphs,
     extract_tables,
     extract_word_counts,
+    fetch_html,
 )
 
 

@@ -7,14 +7,14 @@ initialized with the right args.
 
 from argparse import Namespace
 
-from ..wiki_page import WikiPage
 from ..modes import (
+    AnalyzeFrequencyMode,
+    AutoCountWordsMode,
+    CountWordsMode,
     SummaryMode,
     TableMode,
-    CountWordsMode,
-    AutoCountWordsMode,
-    AnalyzeFrequencyMode,
 )
+from ..wiki_page import WikiPage
 
 
 def build_mode(args: Namespace):

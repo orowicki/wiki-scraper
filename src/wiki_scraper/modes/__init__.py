@@ -20,11 +20,11 @@ Modes:
     counts from a JSON file and the most common words in a language
 """
 
+from .analyze_frequency import AnalyzeFrequencyMode
+from .auto_count_words import AutoCountWordsMode
+from .count_words import CountWordsMode
 from .summary import SummaryMode
 from .table import TableMode
-from .count_words import CountWordsMode
-from .auto_count_words import AutoCountWordsMode
-from .analyze_frequency import AnalyzeFrequencyMode
 
 __all__ = [
     "SummaryMode",

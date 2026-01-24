@@ -13,7 +13,7 @@ SKIP_SELECTOR = (
 )
 
 
-def extract_paragraphs(content: Tag) -> list[Tag]:
+def extract_paragraphs(content: Tag) -> list[str]:
     """
     Extract the main paragraphs from a Wiki article content Tag.
 
@@ -28,16 +28,16 @@ def extract_paragraphs(content: Tag) -> list[Tag]:
 
     Returns
     -------
-    list[Tag]
-        A list of bs4 Tag objects representing the filtered paragraphs.
+    list[str]
+        A list of strings containing the filtered paragraphs.
     """
     paragraphs = content.find_all("p")
 
     skipped = set(content.select(SKIP_SELECTOR))
     paragraphs = [
-        p
+        p.get_text().strip()
         for p in paragraphs
-        if p not in skipped and p.get_text(" ", strip=True) is not None
+        if p not in skipped and p.get_text(" ", strip=True)
     ]
 
     return paragraphs

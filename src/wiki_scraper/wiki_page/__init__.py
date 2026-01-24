@@ -17,8 +17,8 @@ Functionality:
 - extract metadata
 """
 
-from .core import WikiPage
 from . import utils
+from .core import WikiPage
 
 __all__ = [
     "WikiPage",

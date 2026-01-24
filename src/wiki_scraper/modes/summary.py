@@ -29,9 +29,8 @@ class SummaryMode:
         is printed instead.
         """
         paragraphs = self.page.get_paragraphs()
-        if paragraphs is None:
+        if not paragraphs:
             print(f"No paragraphs for {self.page.phrase}")
             return
 
-        first_paragraph = paragraphs[0].get_text().strip()
-        print(first_paragraph)
+        print(paragraphs[0])

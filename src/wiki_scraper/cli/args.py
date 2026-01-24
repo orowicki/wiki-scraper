@@ -9,8 +9,6 @@ import argparse
 import math
 from importlib.metadata import version
 
-__all__ = ["parse_args"]
-
 VERSION = version("wiki-scraper")
 
 
@@ -18,7 +16,7 @@ def wait_seconds(value: str) -> float:
     try:
         v = float(value)
     except ValueError:
-        raise argparse.ArgumentTypeError("must be a number")
+        raise argparse.ArgumentTypeError("must be a number") from None
 
     if not math.isfinite(v):
         raise argparse.ArgumentTypeError("must be finite")
@@ -36,7 +34,7 @@ def positive_int(value: str) -> int:
     try:
         v = int(value)
     except ValueError:
-        raise argparse.ArgumentTypeError("must be a number")
+        raise argparse.ArgumentTypeError("must be a number") from None
 
     if v <= 0:
         raise argparse.ArgumentTypeError("must be positive")
@@ -48,7 +46,7 @@ def non_negative_int(value: str) -> int:
     try:
         v = int(value)
     except ValueError:
-        raise argparse.ArgumentTypeError("must be a number")
+        raise argparse.ArgumentTypeError("must be a number") from None
 
     if v < 0:
         raise argparse.ArgumentTypeError("must be non-negative")

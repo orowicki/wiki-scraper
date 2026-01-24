@@ -6,8 +6,8 @@ convert them into pandas DataFrames.
 """
 
 import re
-from io import StringIO
 from html import unescape
+from io import StringIO
 
 import pandas as pd
 
