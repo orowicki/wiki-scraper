@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from wiki_scraper.wiki_page.utils import extract_paragraphs
+from mc_wiki_scraper.wiki_page.utils import extract_paragraphs
 
 
 def make_tag(html: str):

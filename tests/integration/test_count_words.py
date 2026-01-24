@@ -2,8 +2,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from wiki_scraper.modes import CountWordsMode
-from wiki_scraper.wiki_page import WikiPage
+from mc_wiki_scraper.modes import CountWordsMode
+from mc_wiki_scraper.wiki_page import WikiPage
 
 HERE = Path(__file__).parent
 

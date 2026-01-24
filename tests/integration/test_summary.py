@@ -2,8 +2,8 @@ import io
 import sys
 from pathlib import Path
 
-from wiki_scraper.modes import SummaryMode
-from wiki_scraper.wiki_page.core import WikiPage
+from mc_wiki_scraper.modes import SummaryMode
+from mc_wiki_scraper.wiki_page.core import WikiPage
 
 HERE = Path(__file__).parent
 

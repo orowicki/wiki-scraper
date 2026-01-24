@@ -9,7 +9,8 @@ import argparse
 import math
 from importlib.metadata import version
 
-VERSION = version("wiki-scraper")
+PROGRAM = "mc-wiki-scraper"
+VERSION = version(PROGRAM)
 
 
 def wait_seconds(value: str) -> float:
@@ -151,7 +152,7 @@ def _add_auto_count_words(subparsers):
 def _build_parser() -> argparse.ArgumentParser:
     """Builds and returns the argument parser for the CLI."""
     parser = argparse.ArgumentParser(
-        prog="wiki-scraper",
+        prog=PROGRAM,
         description="Scrape and analyze pages from minecraft.wiki.",
     )
 

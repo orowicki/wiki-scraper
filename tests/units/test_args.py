@@ -2,7 +2,7 @@ import argparse
 
 import pytest
 
-from wiki_scraper.cli import args
+from mc_wiki_scraper.cli import args
 
 
 @pytest.mark.parametrize("val,expected", [(1, 1), (42, 42)])

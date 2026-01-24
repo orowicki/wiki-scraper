@@ -2,7 +2,7 @@ from collections import Counter
 
 from bs4 import BeautifulSoup, Tag
 
-from wiki_scraper.wiki_page.utils import extract_word_counts
+from mc_wiki_scraper.wiki_page.utils import extract_word_counts
 
 
 def make_tag(html: str) -> Tag:

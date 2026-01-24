@@ -1,4 +1,4 @@
-from wiki_scraper.wiki_page.utils import extract_id_and_title
+from mc_wiki_scraper.wiki_page.utils import extract_id_and_title
 
 
 def test_extracts_id_and_title_correctly():

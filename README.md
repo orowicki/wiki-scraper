@@ -1,10 +1,10 @@
-# Wiki Scraper
+# MC Wiki Scraper
 
-![Python](https://img.shields.io/pypi/pyversions/wiki-scraper)
+![Python](https://img.shields.io/pypi/pyversions/mc-wiki-scraper)
 ![Tests](https://img.shields.io/github/workflow/status/orowicki/wiki-scraper/Tests)
 ![Coverage](https://img.shields.io/codecov/c/github/orowicki/wiki-scraper)
 ![Lint](https://img.shields.io/badge/lint-ruff-green)
-![PyPI](https://img.shields.io/pypi/v/wiki-scraper)
+![PyPI](https://img.shields.io/pypi/v/mc-wiki-scraper)
 
 Scrape and analyze articles from [minecraft.wiki](https://minecraft.wiki/).
 
@@ -20,9 +20,18 @@ Scrape and analyze articles from [minecraft.wiki](https://minecraft.wiki/).
 
 ---
 
+## Usage
+
+```bash
+mc-wiki-scraper -h
+```
+
+---
+
 ## Installation
 
 Requires **Python 3.13+**. Install to a virtual environment (recommended):
 
 ```bash
-pip install .
+pip install mc-wiki-scraper
+```
