@@ -1,8 +1,7 @@
 # MC Wiki Scraper
 
 ![Python](https://img.shields.io/pypi/pyversions/mc-wiki-scraper)
-![Tests](https://img.shields.io/github/workflow/status/orowicki/wiki-scraper/Tests)
-![Coverage](https://img.shields.io/codecov/c/github/orowicki/wiki-scraper)
+![Tests](https://img.shields.io/github/workflow/status/orowicki/wiki-scraper/tests)
 ![Lint](https://img.shields.io/badge/lint-ruff-green)
 ![PyPI](https://img.shields.io/pypi/v/mc-wiki-scraper)
 
