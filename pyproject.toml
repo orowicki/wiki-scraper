@@ -1,11 +1,11 @@
 [project]
 name = "mc-wiki-scraper"
-version = "0.1.2"
+version = "0.1.3"
 description = "Scrape and analyze articles from minecraft.wiki"
 authors = [{name = "Oskar Rowicki", email = "oskar.rowicki@gmail.com"}]
 license = {file = "LICENSE"}
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 
 dependencies = [
     "pandas>=3.0.0",

@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/pypi/pyversions/mc-wiki-scraper)
 [![PyPI](https://img.shields.io/pypi/v/mc-wiki-scraper)](https://pypi.org/project/mc-wiki-scraper/)
-[![Tests](https://github.com/orowicki/wiki-scraper/actions/workflows/tests.yml/badge.svg)](https://github.com/orowicki/wiki-scraper/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/orowicki/wiki-scraper/tests)](https://github.com/orowicki/wiki-scraper/actions)
 ![Lint](https://img.shields.io/badge/lint-ruff-green)
 
 Scrape and analyze articles from [minecraft.wiki](https://minecraft.wiki/)
@@ -37,7 +37,7 @@ mc-wiki-scraper summary 'iron ingot'
 
 ## Installation
 
-Requires **Python 3.13+**. Install to a virtual environment (recommended):
+Requires **Python 3.11+**. Install to a virtual environment (recommended):
 
 ```bash
 python -m venv .venv  
