@@ -1,8 +1,8 @@
 # MC Wiki Scraper
 
-![Python](https://img.shields.io/pypi/pyversions/mc-wiki-scraper)  
-[![PyPI](https://img.shields.io/pypi/v/mc-wiki-scraper)](https://pypi.org/project/mc-wiki-scraper/)  
-[![Tests](https://github.com/orowicki/wiki-scraper/actions/workflows/tests.yml/badge.svg)](https://github.com/orowicki/wiki-scraper/actions)  
+![Python](https://img.shields.io/pypi/pyversions/mc-wiki-scraper)
+[![PyPI](https://img.shields.io/pypi/v/mc-wiki-scraper)](https://pypi.org/project/mc-wiki-scraper/)
+[![Tests](https://github.com/orowicki/wiki-scraper/actions/workflows/tests.yml/badge.svg)](https://github.com/orowicki/wiki-scraper/actions)
 ![Lint](https://img.shields.io/badge/lint-ruff-green)
 
 Scrape and analyze articles from [minecraft.wiki](https://minecraft.wiki/)
