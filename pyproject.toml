@@ -1,6 +1,6 @@
 [project]
 name = "mc-wiki-scraper"
-version = "0.1.5"
+version = "0.1.6"
 description = "Scrape and analyze articles from minecraft.wiki"
 authors = [{name = "Oskar Rowicki", email = "oskar.rowicki@gmail.com"}]
 license = {file = "LICENSE"}
@@ -14,7 +14,9 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Environment :: Console",
     "License :: OSI Approved :: MIT License",
+    'Programming Language :: Python',
     "Programming Language :: Python :: 3",
+    'Programming Language :: Python :: 3 :: Only',
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -44,5 +46,4 @@ requires = ["hatchling>=1.22"]
 build-backend = "hatchling.build"
 
 [project.urls]
-"Source" = "https://github.com/orowicki/wiki-scraper"
-
+"source" = "https://github.com/orowicki/wiki-scraper"
