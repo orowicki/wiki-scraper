@@ -1,5 +1,5 @@
 """
-core module for extracting structured data from Wiki articles.
+Core module for extracting structured data from Wiki articles.
 
 Provides the ``WikiPage`` class, which handles fetching HTML from a URL
 or file, parsing it with BeautifulSoup, and extracting paragraphs,

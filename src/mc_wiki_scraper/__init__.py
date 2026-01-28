@@ -1,6 +1,6 @@
 """
 Main package for wiki scraping and analysis.
-
+---
 Provides the top-level Scraper class and exposes submodules for
 CLI, article handling, and different modes of operation.
 """

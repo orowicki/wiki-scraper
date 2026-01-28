@@ -1,6 +1,6 @@
 """
 cli
-___
+---
 The ``cli`` package provides ways to parse args,
 build a mode object from them and run the program.
 

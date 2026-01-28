@@ -12,7 +12,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from wordfreq import top_n_list, zipf_frequency
+from wordfreq import top_n_list, word_frequency
 
 
 class AnalyzeFrequencyMode:
@@ -108,14 +108,14 @@ class AnalyzeFrequencyMode:
         """
         Normalize word frequencies for the reference language.
 
-        Word frequencies are obtained using Zipf frequency values for
-        the most common words in the selected language and normalized
-        by the maximum Zipf frequency.
+        Word frequencies are obtained using ``word_freq`` frequency
+        values for the most common words in the selected language and
+        normalized by the maximum word frequency.
         """
         lang_words = top_n_list(self.LANG, self.MAX_LANG_WORDS)
-        lang_zipf = {w: zipf_frequency(w, self.LANG) for w in lang_words}
-        lang_max = max(lang_zipf.values())
-        self.lang_norms = {w: f / lang_max for w, f in lang_zipf.items()}
+        lang_f = {w: word_frequency(w, self.LANG) for w in lang_words}
+        lang_max = max(lang_f.values())
+        self.lang_norms = {w: f / lang_max for w, f in lang_f.items()}
 
     def plot_comparison(self, table: pd.DataFrame):
         """
@@ -139,7 +139,7 @@ class AnalyzeFrequencyMode:
         plt.figure(figsize=(max(10, len(words) * 0.6), 6))
         plt.bar(x - width / 2, article_freqs, width, label="Wiki")
         plt.bar(x + width / 2, lang_freqs, width, label=self.LANGUAGE_NAME)
-        plt.xticks(x, words, rotation=45, ha="right")
+        plt.xticks(x, words)
         plt.ylabel("Normalized frequency")
         plt.xlabel("Word")
         plt.title(f"Word frequency comparison ({self.mode} mode)")
