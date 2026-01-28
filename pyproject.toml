@@ -1,6 +1,6 @@
 [project]
 name = "mc-wiki-scraper"
-version = "0.1.4"
+version = "0.1.5"
 description = "Scrape and analyze articles from minecraft.wiki"
 authors = [{name = "Oskar Rowicki", email = "oskar.rowicki@gmail.com"}]
 license = {file = "LICENSE"}
@@ -16,6 +16,8 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
     "Topic :: Text Processing",
